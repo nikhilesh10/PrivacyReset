@@ -1,9 +1,14 @@
 {
   "manifest_version": 3,
   "name": "PrivacyReset",
-  "version": "0.3.0",
-  "description": "Local-first browser privacy cleanup, protected websites, fingerprint inspection, and local privacy analysis.",
+  "version": "1.0.0",
+  "description": "Local-first browser privacy cleanup, protected websites, fingerprint inspection, local file check, and user-consented exposure intelligence.",
   "permissions": ["storage", "alarms", "browsingData"],
+  "host_permissions": [
+    "https://api.github.com/*",
+    "https://en.gravatar.com/*",
+    "https://haveibeenpwned.com/*"
+  ],
   "action": {
     "default_title": "PrivacyReset",
     "default_popup": "popup.html"

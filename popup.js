@@ -261,6 +261,151 @@ $("docFileInput").addEventListener("change", async (event) => {
   }
 });
 
+/* --- Module 3: Consent-Based Digital Footprint Scanner --- */
+$("scanFootprintBtn").addEventListener("click", async () => {
+  const container = $("footprintResults");
+  container.innerHTML = "";
+
+  if (!$("externalConsentToggle").checked) {
+    const err = document.createElement("div");
+    err.className = "status error";
+    err.textContent = "Check the explicit consent box above before sending external queries.";
+    container.appendChild(err);
+    return;
+  }
+
+  $("scanFootprintBtn").disabled = true;
+  const loading = document.createElement("div");
+  loading.className = "status";
+  loading.textContent = "Querying authorized public sources…";
+  container.appendChild(loading);
+
+  try {
+    const report = await PrivacyResetExposure.scanDigitalFootprint({
+      username: $("fpUsernameInput").value,
+      email: $("fpEmailInput").value,
+      fullName: $("fpFullNameInput").value
+    });
+
+    container.innerHTML = "";
+    for (const item of report.findings) {
+      const card = document.createElement("div");
+      card.className = "fp-card";
+
+      const title = document.createElement("div");
+      title.className = "fp-card-title";
+      title.textContent = `${item.source} · Checked ${item.checkedAt}`;
+
+      const badge = document.createElement("span");
+      const isVerified = item.confidence.startsWith("Verified");
+      const isNone = item.confidence.startsWith("No Public");
+      badge.className = `match-badge ${isVerified ? "verified" : isNone ? "none" : ""}`;
+      badge.textContent = item.confidence;
+
+      const summary = document.createElement("div");
+      summary.className = "fp-card-note";
+      summary.style.marginTop = "5px";
+      summary.textContent = item.summary;
+
+      const cats = document.createElement("div");
+      cats.className = "fp-card-fix";
+      cats.textContent = `Exposed categories: ${item.categories.join(", ")}`;
+
+      const src = document.createElement("div");
+      src.className = "fp-card-val";
+      src.style.marginTop = "4px";
+      src.textContent = `Source URL: ${item.sourceUrl}`;
+
+      card.append(title, badge, summary, cats, src);
+      container.appendChild(card);
+    }
+  } catch (error) {
+    container.innerHTML = "";
+    const err = document.createElement("div");
+    err.className = "status error";
+    err.textContent = error.message;
+    container.appendChild(err);
+  } finally {
+    $("scanFootprintBtn").disabled = false;
+  }
+});
+
+/* --- Module 4: Authorized Breach Metadata Check --- */
+$("checkBreachBtn").addEventListener("click", async () => {
+  const container = $("breachResults");
+  container.innerHTML = "";
+
+  if (!$("externalConsentToggle").checked) {
+    const err = document.createElement("div");
+    err.className = "status error";
+    err.textContent = "Check the explicit consent box above before querying breach intelligence.";
+    container.appendChild(err);
+    return;
+  }
+
+  $("checkBreachBtn").disabled = true;
+  const loading = document.createElement("div");
+  loading.className = "status";
+  loading.textContent = "Checking authorized breach metadata…";
+  container.appendChild(loading);
+
+  try {
+    const result = await PrivacyResetExposure.checkAuthorizedBreaches({
+      serviceQuery: $("breachServiceInput").value,
+      email: $("breachEmailInput").value,
+      sessionApiKey: $("hibpKeyInput").value
+    });
+
+    // Clear sensitive API key input from DOM immediately after request
+    $("hibpKeyInput").value = "";
+    container.innerHTML = "";
+
+    const meta = document.createElement("div");
+    meta.className = "tiny muted";
+    meta.textContent = `${result.mode} · Checked ${result.checkedAt}`;
+    container.appendChild(meta);
+
+    if (result.records.length === 0) {
+      const clean = document.createElement("div");
+      clean.className = "fp-card";
+      clean.style.color = "var(--green)";
+      clean.textContent = "No matching breach metadata records returned for this query.";
+      container.appendChild(clean);
+      return;
+    }
+
+    for (const rec of result.records) {
+      const card = document.createElement("div");
+      card.className = "fp-card";
+
+      const title = document.createElement("div");
+      title.className = "fp-card-title";
+      title.textContent = `${rec.title} (${rec.domain}) — ${rec.breachDate}`;
+
+      const risk = document.createElement("div");
+      risk.className = "fp-card-fix";
+      risk.textContent = `Risk categories: ${rec.riskCategories.join(" · ")}`;
+
+      const classes = document.createElement("div");
+      classes.className = "fp-card-note";
+      classes.style.marginTop = "4px";
+      classes.textContent = `Reported data classes: ${rec.rawClasses.join(", ")}`;
+
+      card.append(title, risk, classes);
+      container.appendChild(card);
+    }
+  } catch (error) {
+    $("hibpKeyInput").value = "";
+    container.innerHTML = "";
+    const err = document.createElement("div");
+    err.className = "status error";
+    err.textContent = error.message;
+    container.appendChild(err);
+  } finally {
+    $("checkBreachBtn").disabled = false;
+  }
+});
+
 loadSettings().catch((error) => {
   $("cleanupStatus").textContent = `Could not load settings: ${error.message}`;
 });

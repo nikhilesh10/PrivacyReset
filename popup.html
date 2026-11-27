@@ -20,6 +20,7 @@
       <button type="button" class="tab-btn active" data-tab="cleanup">Cleanup</button>
       <button type="button" class="tab-btn" data-tab="fingerprint">Fingerprint</button>
       <button type="button" class="tab-btn" data-tab="localcheck">Local Check</button>
+      <button type="button" class="tab-btn" data-tab="exposure">Exposure</button>
     </nav>
 
     <!-- TAB 1: MODULE 1 (CLEANUP + PROTECTED SITES + SCHEDULE) -->
@@ -87,7 +88,7 @@
       </section>
     </div>
 
-    <!-- TAB 3: LOCAL URL & DOCUMENT PRIVACY ANALYZER + UPCOMING ROADMAP -->
+    <!-- TAB 3: LOCAL URL & DOCUMENT PRIVACY ANALYZER -->
     <div id="tab-localcheck" class="tab-panel" hidden>
       <section class="panel">
         <div class="section-heading">
@@ -111,19 +112,57 @@
         <input id="docFileInput" type="file" accept=".txt,.csv,.json,.log,.md" class="file-input">
         <div id="docResult" class="analyzer-box"></div>
       </section>
+    </div>
 
-      <section class="panel roadmap">
-        <h2>Next milestone (v0.4.0)</h2>
-        <div class="roadmap-item"><span class="dot planned"></span><span><b>Digital footprint & breach checks</b><small>User-consented public identifier & breach metadata verification.</small></span></div>
+    <!-- TAB 4: MODULES 3 & 4 (CONSENT-BASED FOOTPRINT & BREACH INTELLIGENCE) -->
+    <div id="tab-exposure" class="tab-panel" hidden>
+      <section class="notice">
+        <strong>Explicit external request consent</strong>
+        <p>No external requests are sent unless you check consent below. Never enter passwords, government IDs, or bank numbers.</p>
+        <label class="choice" style="margin-top:8px; padding-bottom:0;">
+          <input id="externalConsentToggle" type="checkbox">
+          <span><b>I consent to querying authorized public APIs</b><small>Sends entered handle, SHA-256 email hash, or service query to GitHub, Gravatar, or Have I Been Pwned.</small></span>
+        </label>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Digital footprint scanner</h2>
+          <span class="tag">Module 3</span>
+        </div>
+        <p class="muted">Check your own identifiers against authorized public profile endpoints.</p>
+        <div class="stack-inputs">
+          <input id="fpUsernameInput" type="text" placeholder="Username (e.g., nikhilesh10)" aria-label="Username">
+          <input id="fpEmailInput" type="email" placeholder="Email address (optional)" aria-label="Email address">
+          <input id="fpFullNameInput" type="text" placeholder="Full name for match verification (optional)" aria-label="Full name">
+        </div>
+        <button id="scanFootprintBtn" type="button" class="primary">Scan public footprint</button>
+        <div id="footprintResults" class="fp-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Breach & exposure check</h2>
+          <span class="tag">Module 4</span>
+        </div>
+        <p class="muted">Search public breach metadata by service/domain, or supply your own HIBP API key (session RAM only, never saved) for direct email lookup.</p>
+        <div class="stack-inputs">
+          <input id="breachServiceInput" type="text" placeholder="Service or domain (e.g., adobe, linkedin)" aria-label="Service or domain">
+          <input id="breachEmailInput" type="email" placeholder="Email (requires HIBP key below)" aria-label="Email for breach check">
+          <input id="hibpKeyInput" type="password" placeholder="Optional HIBP API key (never saved)" aria-label="HIBP API key">
+        </div>
+        <button id="checkBreachBtn" type="button" class="primary">Check authorized breach metadata</button>
+        <div id="breachResults" class="fp-list"></div>
       </section>
     </div>
 
-    <footer>PrivacyReset 0.3.0 · Local-First · Zero Telemetry</footer>
+    <footer>PrivacyReset 0.4.0 · Local-First · Consent-Gated APIs</footer>
   </main>
   <script src="cleanup-utils.js"></script>
   <script src="protected-sites.js"></script>
   <script src="fingerprint.js"></script>
   <script src="local-analyzer.js"></script>
+  <script src="exposure-scanner.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
