@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PrivacyReset</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="brand-mark">PR</div>
+      <div>
+        <h1>PrivacyReset</h1>
+        <p class="subtitle">Your browser privacy, under your control.</p>
+      </div>
+    </header>
+
+    <section class="notice">
+      <strong>Local-first prototype</strong>
+      <p>Settings stay in this browser. Cleanup can sign you out of websites and remove saved site data.</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Browser cleanup</h2>
+        <span class="tag">Available</span>
+      </div>
+      <p class="muted">Choose what to clear. The cleanup applies to all websites and all available time.</p>
+
+      <label class="choice"><input type="checkbox" name="data" value="cookies"> <span><b>Cookies and site data</b><small>May sign you out and reset website preferences.</small></span></label>
+      <label class="choice"><input type="checkbox" name="data" value="history"> <span><b>Browsing history</b><small>Removes browser history entries.</small></span></label>
+      <label class="choice"><input type="checkbox" name="data" value="cache"> <span><b>Cached files</b><small>Websites may load more slowly the next time.</small></span></label>
+      <label class="choice"><input type="checkbox" name="data" value="localStorage"> <span><b>Local website storage</b><small>Can reset website settings and saved state.</small></span></label>
+
+      <button id="cleanButton" class="primary">Clear selected data</button>
+      <p id="cleanupStatus" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Protected websites</h2>
+        <span class="tag">Allowlist</span>
+      </div>
+      <p class="muted">Excluded from <b>cookies</b>, <b>cache</b>, and <b>local storage</b> cleanup. Browsing history cleanup remains global.</p>
+
+      <div class="site-input-row">
+        <input id="siteInput" type="text" placeholder="e.g., example.com" aria-label="Website to protect">
+        <button id="addSiteButton" type="button" class="secondary">Add</button>
+      </div>
+      <ul id="protectedSitesList" class="protected-sites-list"></ul>
+      <p id="siteStatus" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <h2>Scheduled cleanup</h2>
+        <span class="tag tag-muted">Optional</span>
+      </div>
+      <label class="toggle-row">
+        <span><b>Enable daily cleanup</b><small>Runs every 24 hours using the categories selected above.</small></span>
+        <input id="scheduleToggle" type="checkbox">
+      </label>
+      <p class="muted tiny">This is off by default. Turn it on only after selecting the data types you want automatically removed.</p>
+      <p id="scheduleStatus" class="status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="panel roadmap">
+      <h2>Privacy insights</h2>
+      <div class="roadmap-item"><span class="dot planned"></span><span><b>Fingerprint analysis</b><small>Planned — inspect browser signals locally.</small></span></div>
+      <div class="roadmap-item"><span class="dot planned"></span><span><b>Digital footprint</b><small>Planned — user-entered identifiers and public sources.</small></span></div>
+      <div class="roadmap-item"><span class="dot planned"></span><span><b>Breach exposure</b><small>Planned — authorized breach-notification integration.</small></span></div>
+      <div class="roadmap-item"><span class="dot planned"></span><span><b>Local document check</b><small>Planned — analyze files only after the user selects them.</small></span></div>
+    </section>
+
+    <footer>PrivacyReset 0.2.0 · No analytics · No remote backend</footer>
+  </main>
+  <script src="cleanup-utils.js"></script>
+  <script src="protected-sites.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
