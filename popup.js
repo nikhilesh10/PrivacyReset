@@ -5,6 +5,20 @@ function selectedData() {
   return [...document.querySelectorAll('input[name="data"]:checked')].map((el) => el.value);
 }
 
+/* --- Tab Switching --- */
+document.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.tab;
+    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    document.querySelectorAll(".tab-panel").forEach((panel) => {
+      const isMatch = panel.id === `tab-${target}`;
+      panel.classList.toggle("active", isMatch);
+      panel.hidden = !isMatch;
+    });
+  });
+});
+
+/* --- Module 1: Protected Websites & Cleanup --- */
 function renderProtectedSites(origins) {
   const list = $("protectedSitesList");
   list.innerHTML = "";
@@ -128,6 +142,122 @@ $("scheduleToggle").addEventListener("change", async (event) => {
   } catch (error) {
     event.target.checked = !enabled;
     $("scheduleStatus").textContent = `Could not update schedule: ${error.message}`;
+  }
+});
+
+/* --- Module 2: Local Fingerprint Inspection --- */
+$("runFingerprintBtn").addEventListener("click", () => {
+  const report = PrivacyResetFingerprint.analyze();
+  $("fpMeta").textContent = `Inspected locally at ${report.timestamp} · ${report.signals.length} signal categories checked`;
+
+  const container = $("fingerprintResults");
+  container.innerHTML = "";
+  for (const item of report.signals) {
+    const card = document.createElement("div");
+    card.className = "fp-card";
+
+    const title = document.createElement("div");
+    title.className = "fp-card-title";
+    title.textContent = item.label;
+
+    const val = document.createElement("div");
+    val.className = "fp-card-val";
+    val.textContent = item.value;
+
+    const note = document.createElement("div");
+    note.className = "fp-card-note";
+    note.textContent = `Exposure: ${item.risk}`;
+
+    const fix = document.createElement("div");
+    fix.className = "fp-card-fix";
+    fix.textContent = `Mitigation: ${item.mitigation}`;
+
+    card.append(title, val, note, fix);
+    container.appendChild(card);
+  }
+});
+
+/* --- Local Check: URL Cleaner & Document PII Scanner --- */
+$("cleanUrlBtn").addEventListener("click", () => {
+  const out = $("urlResult");
+  out.innerHTML = "";
+  try {
+    const res = PrivacyResetLocalAnalyzer.inspectUrl($("urlInput").value);
+    const card = document.createElement("div");
+    card.className = "analyzer-card";
+
+    const summary = document.createElement("div");
+    summary.textContent =
+      res.removedParams.length > 0
+        ? `Removed ${res.removedParams.length} tracker(s): ${res.removedParams.join(", ")}`
+        : "No known tracking parameters found.";
+
+    card.appendChild(summary);
+
+    if (res.isHttpInsecure) {
+      const warn = document.createElement("div");
+      warn.style.color = "#ff8fa3";
+      warn.textContent = "Warning: URL uses unencrypted HTTP instead of HTTPS.";
+      card.appendChild(warn);
+    }
+
+    const code = document.createElement("code");
+    code.className = "clean-url-out";
+    code.textContent = res.cleanedUrl;
+    card.appendChild(code);
+
+    out.appendChild(card);
+  } catch (error) {
+    const errDiv = document.createElement("div");
+    errDiv.className = "status error";
+    errDiv.textContent = error.message;
+    out.appendChild(errDiv);
+  }
+});
+
+$("docFileInput").addEventListener("change", async (event) => {
+  const file = event.target.files?.[0];
+  const out = $("docResult");
+  out.innerHTML = "";
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    const errDiv = document.createElement("div");
+    errDiv.className = "status error";
+    errDiv.textContent = "File exceeds 2 MB local scan limit.";
+    out.appendChild(errDiv);
+    return;
+  }
+
+  try {
+    const text = await file.text();
+    const res = PrivacyResetLocalAnalyzer.scanTextLocally(text, file.name);
+    const card = document.createElement("div");
+    card.className = "analyzer-card";
+
+    const header = document.createElement("div");
+    header.innerHTML = `<b>${res.fileName}</b> (${res.charCount.toLocaleString()} chars scanned locally)`;
+    card.appendChild(header);
+
+    if (res.findings.length === 0) {
+      const clean = document.createElement("div");
+      clean.style.color = "var(--green)";
+      clean.textContent = "No common PII/token patterns detected.";
+      card.appendChild(clean);
+    } else {
+      for (const f of res.findings) {
+        const line = document.createElement("div");
+        line.textContent = `• ${f.category}: ${f.count} potential match(es)`;
+        card.appendChild(line);
+      }
+    }
+
+    out.appendChild(card);
+  } catch (error) {
+    const errDiv = document.createElement("div");
+    errDiv.className = "status error";
+    errDiv.textContent = `Could not read file: ${error.message}`;
+    out.appendChild(errDiv);
   }
 });
 

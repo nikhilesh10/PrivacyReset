@@ -12,71 +12,118 @@
       <div class="brand-mark">PR</div>
       <div>
         <h1>PrivacyReset</h1>
-        <p class="subtitle">Your browser privacy, under your control.</p>
+        <p class="subtitle">Local-first browser privacy & exposure control.</p>
       </div>
     </header>
 
-    <section class="notice">
-      <strong>Local-first prototype</strong>
-      <p>Settings stay in this browser. Cleanup can sign you out of websites and remove saved site data.</p>
-    </section>
+    <nav class="tabs" role="tablist" aria-label="PrivacyReset modules">
+      <button type="button" class="tab-btn active" data-tab="cleanup">Cleanup</button>
+      <button type="button" class="tab-btn" data-tab="fingerprint">Fingerprint</button>
+      <button type="button" class="tab-btn" data-tab="localcheck">Local Check</button>
+    </nav>
 
-    <section class="panel">
-      <div class="section-heading">
-        <h2>Browser cleanup</h2>
-        <span class="tag">Available</span>
-      </div>
-      <p class="muted">Choose what to clear. The cleanup applies to all websites and all available time.</p>
+    <!-- TAB 1: MODULE 1 (CLEANUP + PROTECTED SITES + SCHEDULE) -->
+    <div id="tab-cleanup" class="tab-panel active">
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Browser cleanup</h2>
+          <span class="tag">Module 1</span>
+        </div>
+        <p class="muted">Choose what to clear across your browser.</p>
 
-      <label class="choice"><input type="checkbox" name="data" value="cookies"> <span><b>Cookies and site data</b><small>May sign you out and reset website preferences.</small></span></label>
-      <label class="choice"><input type="checkbox" name="data" value="history"> <span><b>Browsing history</b><small>Removes browser history entries.</small></span></label>
-      <label class="choice"><input type="checkbox" name="data" value="cache"> <span><b>Cached files</b><small>Websites may load more slowly the next time.</small></span></label>
-      <label class="choice"><input type="checkbox" name="data" value="localStorage"> <span><b>Local website storage</b><small>Can reset website settings and saved state.</small></span></label>
+        <label class="choice"><input type="checkbox" name="data" value="cookies"> <span><b>Cookies and site data</b><small>May sign you out and reset website preferences.</small></span></label>
+        <label class="choice"><input type="checkbox" name="data" value="history"> <span><b>Browsing history</b><small>Global cleanup — ignores protected websites.</small></span></label>
+        <label class="choice"><input type="checkbox" name="data" value="cache"> <span><b>Cached files</b><small>Websites may load more slowly the next time.</small></span></label>
+        <label class="choice"><input type="checkbox" name="data" value="localStorage"> <span><b>Local website storage</b><small>Can reset website settings and saved state.</small></span></label>
 
-      <button id="cleanButton" class="primary">Clear selected data</button>
-      <p id="cleanupStatus" class="status" role="status" aria-live="polite"></p>
-    </section>
+        <button id="cleanButton" class="primary">Clear selected data</button>
+        <p id="cleanupStatus" class="status" role="status" aria-live="polite"></p>
+      </section>
 
-    <section class="panel">
-      <div class="section-heading">
-        <h2>Protected websites</h2>
-        <span class="tag">Allowlist</span>
-      </div>
-      <p class="muted">Excluded from <b>cookies</b>, <b>cache</b>, and <b>local storage</b> cleanup. Browsing history cleanup remains global.</p>
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Protected websites</h2>
+          <span class="tag">Allowlist</span>
+        </div>
+        <p class="muted">Excluded from <b>cookies</b>, <b>cache</b>, and <b>local storage</b> cleanup. Browsing history cleanup remains global.</p>
 
-      <div class="site-input-row">
-        <input id="siteInput" type="text" placeholder="e.g., example.com" aria-label="Website to protect">
-        <button id="addSiteButton" type="button" class="secondary">Add</button>
-      </div>
-      <ul id="protectedSitesList" class="protected-sites-list"></ul>
-      <p id="siteStatus" class="status" role="status" aria-live="polite"></p>
-    </section>
+        <div class="site-input-row">
+          <input id="siteInput" type="text" placeholder="e.g., example.com" aria-label="Website to protect">
+          <button id="addSiteButton" type="button" class="secondary">Add</button>
+        </div>
+        <ul id="protectedSitesList" class="protected-sites-list"></ul>
+        <p id="siteStatus" class="status" role="status" aria-live="polite"></p>
+      </section>
 
-    <section class="panel">
-      <div class="section-heading">
-        <h2>Scheduled cleanup</h2>
-        <span class="tag tag-muted">Optional</span>
-      </div>
-      <label class="toggle-row">
-        <span><b>Enable daily cleanup</b><small>Runs every 24 hours using the categories selected above.</small></span>
-        <input id="scheduleToggle" type="checkbox">
-      </label>
-      <p class="muted tiny">This is off by default. Turn it on only after selecting the data types you want automatically removed.</p>
-      <p id="scheduleStatus" class="status" role="status" aria-live="polite"></p>
-    </section>
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Scheduled cleanup</h2>
+          <span class="tag tag-muted">Optional</span>
+        </div>
+        <label class="toggle-row">
+          <span><b>Enable daily cleanup</b><small>Runs every 24 hours using selected categories and allowlist.</small></span>
+          <input id="scheduleToggle" type="checkbox">
+        </label>
+        <p id="scheduleStatus" class="status" role="status" aria-live="polite"></p>
+      </section>
+    </div>
 
-    <section class="panel roadmap">
-      <h2>Privacy insights</h2>
-      <div class="roadmap-item"><span class="dot planned"></span><span><b>Fingerprint analysis</b><small>Planned — inspect browser signals locally.</small></span></div>
-      <div class="roadmap-item"><span class="dot planned"></span><span><b>Digital footprint</b><small>Planned — user-entered identifiers and public sources.</small></span></div>
-      <div class="roadmap-item"><span class="dot planned"></span><span><b>Breach exposure</b><small>Planned — authorized breach-notification integration.</small></span></div>
-      <div class="roadmap-item"><span class="dot planned"></span><span><b>Local document check</b><small>Planned — analyze files only after the user selects them.</small></span></div>
-    </section>
+    <!-- TAB 2: MODULE 2 (LOCAL BROWSER FINGERPRINT ANALYSIS) -->
+    <div id="tab-fingerprint" class="tab-panel" hidden>
+      <section class="notice">
+        <strong>Exposure assessment only</strong>
+        <p>Inspected 100% locally. No uniqueness score is invented without population data, and reducing signals does not guarantee anonymity.</p>
+      </section>
 
-    <footer>PrivacyReset 0.2.0 · No analytics · No remote backend</footer>
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Browser fingerprint signals</h2>
+          <span class="tag">Module 2</span>
+        </div>
+        <p class="muted">Inspect the attributes websites can read via JavaScript and rendering APIs.</p>
+        <button id="runFingerprintBtn" type="button" class="primary">Inspect local fingerprint</button>
+        <p id="fpMeta" class="tiny muted"></p>
+        <div id="fingerprintResults" class="fp-list"></div>
+      </section>
+    </div>
+
+    <!-- TAB 3: LOCAL URL & DOCUMENT PRIVACY ANALYZER + UPCOMING ROADMAP -->
+    <div id="tab-localcheck" class="tab-panel" hidden>
+      <section class="panel">
+        <div class="section-heading">
+          <h2>URL tracking parameter cleaner</h2>
+          <span class="tag">Local-Only</span>
+        </div>
+        <p class="muted">Inspect a link for UTM/click-ID trackers and generate a clean URL locally.</p>
+        <div class="site-input-row">
+          <input id="urlInput" type="text" placeholder="https://example.com/?utm_source=..." aria-label="URL to inspect">
+          <button id="cleanUrlBtn" type="button" class="secondary">Inspect</button>
+        </div>
+        <div id="urlResult" class="analyzer-box"></div>
+      </section>
+
+      <section class="panel">
+        <div class="section-heading">
+          <h2>Local document PII check</h2>
+          <span class="tag">No Upload</span>
+        </div>
+        <p class="muted">Select a text/log/CSV/JSON file to scan locally in memory for emails, IPs, tokens, or numeric IDs. Nothing leaves your browser.</p>
+        <input id="docFileInput" type="file" accept=".txt,.csv,.json,.log,.md" class="file-input">
+        <div id="docResult" class="analyzer-box"></div>
+      </section>
+
+      <section class="panel roadmap">
+        <h2>Next milestone (v0.4.0)</h2>
+        <div class="roadmap-item"><span class="dot planned"></span><span><b>Digital footprint & breach checks</b><small>User-consented public identifier & breach metadata verification.</small></span></div>
+      </section>
+    </div>
+
+    <footer>PrivacyReset 0.3.0 · Local-First · Zero Telemetry</footer>
   </main>
   <script src="cleanup-utils.js"></script>
   <script src="protected-sites.js"></script>
+  <script src="fingerprint.js"></script>
+  <script src="local-analyzer.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

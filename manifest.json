@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "PrivacyReset",
-  "version": "0.2.0",
-  "description": "A local-first browser privacy manager with protected website allowlisting.",
+  "version": "0.3.0",
+  "description": "Local-first browser privacy cleanup, protected websites, fingerprint inspection, and local privacy analysis.",
   "permissions": ["storage", "alarms", "browsingData"],
   "action": {
     "default_title": "PrivacyReset",
